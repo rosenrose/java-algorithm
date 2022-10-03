@@ -1,37 +1,32 @@
+import java.util.Arrays;
+import java.util.Random;
+import java.util.stream.IntStream;
+
 public class Main {
     public static void main(String[] args) {
-        int[] arr = new int[]{20, 25, 26, 29, 33, 1, 3, 5, 6, 10, 11, 19};
-
-        System.out.println(indexOfRotatedArray(arr, 0, arr.length - 1, 0));
-        System.out.println(indexOfRotatedArray(arr, 0, arr.length - 1, 6));
-        System.out.println(indexOfRotatedArray(arr, 0, arr.length - 1, 20));
-        System.out.println(indexOfRotatedArray(arr, 0, arr.length - 1, 19));
-        System.out.println(indexOfRotatedArray(arr, 0, arr.length - 1, 26));
+        for (int i = 0; i < 3; i++) {
+            int[] arr = createRandomArray();
+            bubbleSort(arr);
+            System.out.println(Arrays.toString(arr));
+        }
     }
 
-    private static int indexOfRotatedArray(int[] arr, int left, int right, int value) {
-        if (left > right) {
-            return -1;
-        }
+    private static int[] createRandomArray() {
+        Random rand = new Random();
+        return IntStream.of(new int[rand.nextInt(3, 11)]).map(i -> rand.nextInt(31)).toArray();
+    }
 
-        int mid = (left + right) / 2;
+    private static void bubbleSort(int[] arr) {
+        for (int i = 0; i < arr.length - 1; i++) {
+            for (int j = 0; j < arr.length - 1 - i; j++) {  // 한번 훑을 때마다 방문하는 요소 수가 1씩 줄어듦
+                if (arr[j] <= arr[j + 1]) { // 왼쪽 > 오른쪽일 때만 교환하니 안정적
+                    continue;
+                }
 
-        if (arr[mid] == value) {
-            return mid;
-        }
-
-        if (arr[left] <= arr[mid]) {    // left부터 mid까지 정렬된 경우
-            if (arr[left] <= value && value <= arr[mid]) {
-                return indexOfRotatedArray(arr, left, mid - 1, value);
+                int temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
             }
-
-            return indexOfRotatedArray(arr, mid + 1, right, value);
-        } else {    // mid부터 right까지 정렬된 경우
-            if (arr[mid] <= value && value <= arr[right]) {
-                return indexOfRotatedArray(arr, mid + 1, right, value);
-            }
-
-            return indexOfRotatedArray(arr, left, mid - 1, value);
         }
     }
 }
