@@ -6,7 +6,7 @@ public class Main {
     public static void main(String[] args) {
         for (int i = 0; i < 5; i++) {
             int[] arr = createRandomArray();
-            selectionSort(arr);
+            insertionSort(arr);
             System.out.println(Arrays.toString(arr));
         }
 
@@ -17,19 +17,17 @@ public class Main {
         return IntStream.of(new int[rand.nextInt(1, 11)]).map(i -> rand.nextInt(31)).toArray();
     }
 
-    private static void selectionSort(int[] arr) {
-        for (int i = 0; i < arr.length - 1; i++) {
-            int minIndex = i;
-
-            for (int j = i + 1; j < arr.length; j++) {
-                if (arr[j] < arr[minIndex]) {
-                    minIndex = j;
+    private static void insertionSort(int[] arr) {
+        for (int i = 1; i < arr.length; i++) {
+            for (int j = i - 1; j >= 0; j--) {
+                if (arr[j] <= arr[j + 1]) {
+                    break;
                 }
-            }
 
-            int temp = arr[i];
-            arr[i] = arr[minIndex];
-            arr[minIndex] = temp;
+                int temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+            }
         }
     }
 }
