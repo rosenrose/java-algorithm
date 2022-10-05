@@ -6,7 +6,7 @@ public class Main {
     public static void main(String[] args) {
         for (int i = 0; i < 5; i++) {
             int[] arr = createRandomArray();
-            quickSort(arr, 0, arr.length - 1);
+            mergeSort(arr, 0, arr.length - 1);
             System.out.println(Arrays.toString(arr));
         }
 
@@ -17,36 +17,42 @@ public class Main {
         return IntStream.of(new int[rand.nextInt(1, 11)]).map(i -> rand.nextInt(31)).toArray();
     }
 
-    private static void quickSort(int[] arr, int left, int right) {
-        if (left >= right) {
+    private static void mergeSort(int[] arr, int left, int right) {
+        int len = right - left + 1;
+
+        if (len <= 1) {
             return;
         }
 
-        int i = left;
-        int j = right;
-        int pivotValue = arr[(i + j) / 2];
+        int pivot = (left + right) / 2;
 
-        while (i <= j) {
-            while (arr[i] < pivotValue) {
-                i++;
+        mergeSort(arr, left, pivot);
+        mergeSort(arr, pivot + 1, right);
+
+        int a = left;
+        int b = pivot + 1;
+        int[] temp = new int[len];
+
+        for (int i = 0; i < len; i++) {
+            if (a < pivot + 1 && b < right + 1) {
+                if (arr[a] < arr[b]) {
+                    temp[i] = arr[a];
+                    a++;
+                } else {
+                    temp[i] = arr[b];
+                    b++;
+                }
+            } else {
+                if (a == pivot + 1) {
+                    temp[i] = arr[b];
+                    b++;
+                } else {
+                    temp[i] = arr[a];
+                    a++;
+                }
             }
-            while (arr[j] > pivotValue) {
-                j--;
-            }
-
-            if (i > j) {
-                break;
-            }
-
-            int temp = arr[i];
-            arr[i] = arr[j];
-            arr[j] = temp;
-
-            i++;
-            j--;
         }
 
-        quickSort(arr, left, j);
-        quickSort(arr, i, right);
+        System.arraycopy(temp, 0, arr, left, len);
     }
 }
