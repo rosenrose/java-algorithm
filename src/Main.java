@@ -6,10 +6,9 @@ public class Main {
     public static void main(String[] args) {
         for (int i = 0; i < 5; i++) {
             int[] arr = createRandomArray();
-            mergeSort(arr, 0, arr.length - 1);
+            countingSort(arr);
             System.out.println(Arrays.toString(arr));
         }
-
     }
 
     private static int[] createRandomArray() {
@@ -17,42 +16,27 @@ public class Main {
         return IntStream.of(new int[rand.nextInt(1, 11)]).map(i -> rand.nextInt(31)).toArray();
     }
 
-    private static void mergeSort(int[] arr, int left, int right) {
-        int len = right - left + 1;
+    private static void countingSort(int[] arr) {
+        int max = Arrays.stream(arr).max().orElse(-1);
 
-        if (len <= 1) {
-            return;
+        int[] count = new int[max + 1];
+
+        for (int num : arr) {
+            count[num]++;
+        }
+        for (int i = 0; i < count.length - 1; i++) {
+            count[i + 1] += count[i];
         }
 
-        int pivot = (left + right) / 2;
+        int[] temp = new int[arr.length];
 
-        mergeSort(arr, left, pivot);
-        mergeSort(arr, pivot + 1, right);
+        for (int num : arr) {
+            int index = count[num];
 
-        int a = left;
-        int b = pivot + 1;
-        int[] temp = new int[len];
-
-        for (int i = 0; i < len; i++) {
-            if (a < pivot + 1 && b < right + 1) {
-                if (arr[a] < arr[b]) {
-                    temp[i] = arr[a];
-                    a++;
-                } else {
-                    temp[i] = arr[b];
-                    b++;
-                }
-            } else {
-                if (a == pivot + 1) {
-                    temp[i] = arr[b];
-                    b++;
-                } else {
-                    temp[i] = arr[a];
-                    a++;
-                }
-            }
+            temp[index - 1] = num;
+            count[num]--;
         }
 
-        System.arraycopy(temp, 0, arr, left, len);
+        System.arraycopy(temp, 0, arr, 0, arr.length);
     }
 }
