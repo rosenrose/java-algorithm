@@ -22,14 +22,16 @@ public class Main {
         tree.addNode(13);
         tree.addNode(14);
 
-        tree.addNode(16);
+        Node node = tree.addNode(16);
 
         tree.printTree();
         //  tree.printSorted();
-        Node found = tree.search(13);
-        found.printNode();
-        found = tree.search(20);
-        System.out.println(found == null);
+        node.printNode();
+
+        node = tree.search(13);
+        node.printNode();
+        node = tree.search(20);
+        System.out.println(node == null);
     }
 
     public static class Node {
@@ -77,22 +79,22 @@ public class Main {
             return parent.left == this ? parent.right : parent.left;
         }
 
-        public void addNode(int value) {
+        public Node addNode(int value) {
             if (value < this.value) {
                 if (this.left == null) {
                     this.left = new Node(value, this);
-                    return;
+                    return this.left;
                 }
 
-                this.left.addNode(value);
-            } else {
-                if (this.right == null) {
-                    this.right = new Node(value, this);
-                    return;
-                }
-
-                this.right.addNode(value);
+                return this.left.addNode(value);
             }
+
+            if (this.right == null) {
+                this.right = new Node(value, this);
+                return this.right;
+            }
+
+            return this.right.addNode(value);
         }
 
         public void addNode() {
