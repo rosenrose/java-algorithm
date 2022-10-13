@@ -2,36 +2,28 @@ import java.util.ArrayDeque;
 
 public class Main {
     public static void main(String[] args) {
-        Node tree = new Node(4);
+        Node tree = new Node(6);
 
-        tree.addNode(6);
+        tree.addNode(4);
         tree.addNode(10);
-
         tree.addNode(8);
         tree.addNode(2);
         tree.addNode(5);
-        tree.addNode(11);
+        tree.addNode(15);
 
         tree.addNode(1);
         tree.addNode(9);
         tree.addNode(3);
         tree.addNode(7);
-
-        tree.addNode(7);
-        tree.addNode(12);
-        tree.addNode(13);
-        tree.addNode(14);
-
-        Node node = tree.addNode(16);
+        tree.addNode(16);
 
         tree.printTree();
-        //  tree.printSorted();
-        node.printNode();
+        // tree.printSorted();
 
-        node = tree.search(13);
-        node.printNode();
-        node = tree.search(20);
-        System.out.println(node == null);
+        tree.delete(tree.search(10));
+        tree.printTree();
+        tree.delete(tree.search(9));
+        tree.printTree();
     }
 
     public static class Node {
@@ -53,20 +45,36 @@ public class Main {
             this(value, null);
         }
 
-        public boolean isEmpty() {
-            return this.left == null && this.right == null;
+        public boolean hasChild() {
+            return !(left == null && right == null);
         }
 
-        public boolean isFull() {
-            return this.left != null && this.right != null;
+        private void removeChild(Node child) {
+            if (left == child) {
+                left = null;
+            }
+            if (right == child) {
+                right = null;
+            }
+        }
+
+        private void linkChildToParent(Node child) {
+            if (getLeftOrRight() == 'L') {
+                parent.left = child;
+            } else {
+                parent.right = child;
+            }
+
+            child.parent = parent;
+            child.depth = child.parent.depth + 1;
         }
 
         public char getLeftOrRight() {
-            if (this.parent == null) {
-                return ' ';
+            if (parent == null) {
+                return 'C';
             }
 
-            return this.parent.left == this ? 'L' : 'R';
+            return parent.left == this ? 'L' : 'R';
         }
 
         public Node getSibling() {
@@ -81,31 +89,31 @@ public class Main {
 
         public Node addNode(int value) {
             if (value < this.value) {
-                if (this.left == null) {
-                    this.left = new Node(value, this);
-                    return this.left;
+                if (left == null) {
+                    left = new Node(value, this);
+                    return left;
                 }
 
-                return this.left.addNode(value);
+                return left.addNode(value);
             }
 
-            if (this.right == null) {
-                this.right = new Node(value, this);
-                return this.right;
+            if (right == null) {
+                right = new Node(value, this);
+                return right;
             }
 
-            return this.right.addNode(value);
+            return right.addNode(value);
         }
 
         public void addNode() {
-            this.addNode(0);
+            addNode(0);
         }
 
         public int sum() {
-            int leftSum = this.left == null ? 0 : this.left.sum();
-            int rightSum = this.right == null ? 0 : this.right.sum();
+            int leftSum = left == null ? 0 : left.sum();
+            int rightSum = right == null ? 0 : right.sum();
 
-            return this.value + leftSum + rightSum;
+            return value + leftSum + rightSum;
         }
 
         public Node search(int value) {
@@ -114,25 +122,82 @@ public class Main {
             }
 
             if (value < this.value) {
-                if (this.left == null) {
+                if (left == null) {
                     return null;
                 }
 
-                return this.left.search(value);
+                return left.search(value);
             }
 
-            if (this.right == null) {
+            if (right == null) {
                 return null;
             }
 
-            return this.right.search(value);
+            return right.search(value);
+        }
+
+        public void addTree(Node tree) {
+            addNode(tree.value);
+
+            if (tree.left != null) {
+                addTree(tree.left);
+            }
+            if (tree.right != null) {
+                addTree(tree.right);
+            }
+        }
+
+        public Node getLeftMost() {
+            Node leftMost = this;
+
+            while (leftMost.left != null) {
+                leftMost = leftMost.left;
+            }
+
+            return leftMost;
+        }
+
+        public Node getRightMost() {
+            Node rightMost = this;
+
+            while (rightMost.right != null) {
+                rightMost = rightMost.right;
+            }
+
+            return rightMost;
+        }
+
+        public void delete(Node node) {
+            if (node == null || node.parent == null) {
+                return;
+            }
+
+            if (!node.hasChild()) {
+                node.parent.removeChild(node);
+                return;
+            }
+
+            if (node.left == null) {
+                node.linkChildToParent(node.right);
+                return;
+            }
+            if (node.right == null) {
+                node.linkChildToParent(node.left);
+                return;
+            }
+
+            Node predecessor = node.left.getRightMost();
+            // Node successor = node.right.getLeftMost();
+
+            node.value = predecessor.value;
+            delete(predecessor);
         }
 
         public void printTree() {
             ArrayDeque<Node> queue = new ArrayDeque<>();
 
             queue.addLast(this);
-            this.printTree(queue);
+            printTree(queue);
             System.out.println("==========");
         }
 
@@ -158,25 +223,25 @@ public class Main {
             }
             System.out.println();
 
-            this.printTree(queue);
+            printTree(queue);
         }
 
         public void printNode() {
-            System.out.printf("%d ", this.value);
-            if (this.parent != null) {
-                System.out.printf("(%d%c) ", this.parent.value, this.getLeftOrRight());
+            System.out.printf("%d ", value);
+            if (parent != null) {
+                System.out.printf("(%d%c) ", parent.value, getLeftOrRight());
             }
         }
 
         public void printSorted() {
-            if (this.left != null) {
-                this.left.printSorted();
+            if (left != null) {
+                left.printSorted();
             }
 
-            System.out.printf("%d ", this.value);
+            System.out.printf("%d ", value);
 
-            if (this.right != null) {
-                this.right.printSorted();
+            if (right != null) {
+                right.printSorted();
             }
         }
     }
