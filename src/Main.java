@@ -2,9 +2,9 @@ import java.util.ArrayDeque;
 
 public class Main {
     public static void main(String[] args) {
-        Node tree = new Node(6);
+        Node tree = new Node(4);
 
-        tree.addNode(4);
+        tree.addNode(6);
         tree.addNode(10);
 
         tree.addNode(8);
@@ -24,8 +24,12 @@ public class Main {
 
         tree.addNode(16);
 
-        tree.print();
-        tree.printSorted();
+        tree.printTree();
+        //  tree.printSorted();
+        Node found = tree.search(13);
+        found.printNode();
+        found = tree.search(20);
+        System.out.println(found == null);
     }
 
     public static class Node {
@@ -102,15 +106,35 @@ public class Main {
             return this.value + leftSum + rightSum;
         }
 
-        public void print() {
+        public Node search(int value) {
+            if (this.value == value) {
+                return this;
+            }
+
+            if (value < this.value) {
+                if (this.left == null) {
+                    return null;
+                }
+
+                return this.left.search(value);
+            }
+
+            if (this.right == null) {
+                return null;
+            }
+
+            return this.right.search(value);
+        }
+
+        public void printTree() {
             ArrayDeque<Node> queue = new ArrayDeque<>();
 
             queue.addLast(this);
-            this.print(queue);
+            this.printTree(queue);
             System.out.println("==========");
         }
 
-        private void print(ArrayDeque<Node> queue) {
+        private void printTree(ArrayDeque<Node> queue) {
             int size = queue.size();
 
             if (size == 0) {
@@ -119,10 +143,7 @@ public class Main {
 
             while (size > 0) {
                 Node first = queue.removeFirst();
-                System.out.printf("%d ", first.value);
-                if (first.parent != null) {
-                    System.out.printf("(%d%c) ", first.parent.value, first.getLeftOrRight());
-                }
+                first.printNode();
 
                 if (first.left != null) {
                     queue.addLast(first.left);
@@ -135,7 +156,14 @@ public class Main {
             }
             System.out.println();
 
-            this.print(queue);
+            this.printTree(queue);
+        }
+
+        public void printNode() {
+            System.out.printf("%d ", this.value);
+            if (this.parent != null) {
+                System.out.printf("(%d%c) ", this.parent.value, this.getLeftOrRight());
+            }
         }
 
         public void printSorted() {
