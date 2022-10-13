@@ -17,7 +17,7 @@ public class Main {
         tree.addNode(3);
         tree.addNode(7);
 
-        tree.addNode(15);
+        tree.addNode(7);
         tree.addNode(12);
         tree.addNode(13);
         tree.addNode(14);
@@ -25,11 +25,11 @@ public class Main {
         tree.addNode(16);
 
         tree.print();
-        System.out.println(tree.sum());
+        tree.printSorted();
     }
 
     public static class Node {
-        public int value = 0;
+        public int value;
         public Node parent;
         public Node left;
         public Node right;
@@ -74,23 +74,20 @@ public class Main {
         }
 
         public void addNode(int value) {
-            ArrayDeque<Node> queue = new ArrayDeque<Node>();
-            queue.addLast(this);
-
-            while (true) {
-                Node first = queue.removeFirst();
-
-                if (first.left == null) {
-                    first.left = new Node(value, first);
-                    return;
-                }
-                if (first.right == null) {
-                    first.right = new Node(value, first);
+            if (value < this.value) {
+                if (this.left == null) {
+                    this.left = new Node(value, this);
                     return;
                 }
 
-                queue.addLast(first.left);
-                queue.addLast(first.right);
+                this.left.addNode(value);
+            } else {
+                if (this.right == null) {
+                    this.right = new Node(value, this);
+                    return;
+                }
+
+                this.right.addNode(value);
             }
         }
 
@@ -106,7 +103,7 @@ public class Main {
         }
 
         public void print() {
-            ArrayDeque<Node> queue = new ArrayDeque<Node>();
+            ArrayDeque<Node> queue = new ArrayDeque<>();
 
             queue.addLast(this);
             this.print(queue);
@@ -139,6 +136,18 @@ public class Main {
             System.out.println();
 
             this.print(queue);
+        }
+
+        public void printSorted() {
+            if (this.left != null) {
+                this.left.printSorted();
+            }
+
+            System.out.printf("%d ", this.value);
+
+            if (this.right != null) {
+                this.right.printSorted();
+            }
         }
     }
 }
