@@ -1,4 +1,5 @@
 import java.util.ArrayDeque;
+import java.util.Stack;
 
 public class Main {
     public static void main(String[] args) {
@@ -18,12 +19,13 @@ public class Main {
         tree.addNode(16);
 
         tree.printTree();
-        // tree.printSorted();
-
-        tree.delete(tree.search(10));
-        tree.printTree();
-        tree.delete(tree.search(9));
-        tree.printTree();
+        tree.printInOrder();
+        System.out.println();
+        tree.printPreOrderRecursive();
+        System.out.println();
+        tree.printPreOrder();
+        System.out.println();
+        tree.printPostOrder();
     }
 
     public static class Node {
@@ -233,16 +235,56 @@ public class Main {
             }
         }
 
-        public void printSorted() {
+        public void printInOrder() {
             if (left != null) {
-                left.printSorted();
+                left.printInOrder();
             }
 
             System.out.printf("%d ", value);
 
             if (right != null) {
-                right.printSorted();
+                right.printInOrder();
             }
+        }
+
+        public void printPreOrderRecursive() {
+            System.out.printf("%d ", value);
+
+            if (left != null) {
+                left.printPreOrder();
+            }
+            if (right != null) {
+                right.printPreOrder();
+            }
+        }
+
+        public void printPreOrder() {
+            Stack<Node> stack = new Stack<>();
+            stack.push(this);
+
+            while (!stack.isEmpty()) {
+                Node node = stack.pop();
+
+                System.out.printf("%d ", node.value);
+
+                if (node.right != null) {
+                    stack.push(node.right);
+                }
+                if (node.left != null) {
+                    stack.push(node.left);
+                }
+            }
+        }
+
+        public void printPostOrder() {
+            if (left != null) {
+                left.printPostOrder();
+            }
+            if (right != null) {
+                right.printPostOrder();
+            }
+
+            System.out.printf("%d ", value);
         }
     }
 }
