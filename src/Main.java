@@ -18,14 +18,15 @@ public class Main {
         tree.addNode(7);
         tree.addNode(16);
 
+        Node newTree = Node.copyTree(tree);
+
+        tree.getLeftMost().value = 100;
         tree.printTree();
-        tree.printInOrder();
-        System.out.println();
-        tree.printPreOrderRecursive();
-        System.out.println();
-        tree.printPreOrder();
-        System.out.println();
-        tree.printPostOrder();
+        newTree.printTree();
+
+        tree.addNode(200);
+        tree.printTree();
+        newTree.printTree();
     }
 
     public static class Node {
@@ -45,6 +46,19 @@ public class Main {
 
         public Node(int value) {
             this(value, null);
+        }
+
+        public static Node copyTree(final Node node) {
+            if (node == null) {
+                return null;
+            }
+
+            Node newNode = new Node(node.value, node.parent);
+
+            newNode.left = Node.copyTree(node.left);
+            newNode.right = Node.copyTree(node.right);
+
+            return newNode;
         }
 
         public boolean hasChild() {
