@@ -56,7 +56,14 @@ public class BinarySearchTree {
             Node newNode = new Node(node.value, node.parent);
 
             newNode.left = Node.copyTree(node.left);
+            if (newNode.left != null) {
+                newNode.left.parent = newNode;
+            }
+
             newNode.right = Node.copyTree(node.right);
+            if (newNode.right != null) {
+                newNode.right.parent = newNode;
+            }
 
             return newNode;
         }
