@@ -1,4 +1,5 @@
 import java.util.ArrayDeque;
+import java.util.Stack;
 
 public class BinaryTree {
     public static void main() {
@@ -25,7 +26,8 @@ public class BinaryTree {
         tree.addNode(16);
 
         tree.print();
-        System.out.println(tree.sum());
+        tree.DFSPrint();
+        tree.BFSPrint();
     }
 
     public static class Node {
@@ -139,6 +141,44 @@ public class BinaryTree {
             System.out.println();
 
             this.print(queue);
+        }
+
+        public void DFSPrint() {
+            Stack<Node> stack = new Stack<>();
+            stack.push(this);
+
+            while (!stack.isEmpty()) {
+                Node node = stack.pop();
+                System.out.printf("%d ", node.value);
+
+                if (node.right != null) {
+                    stack.push(node.right);
+                }
+                if (node.left != null) {
+                    stack.push(node.left);
+                }
+            }
+
+            System.out.println();
+        }
+
+        public void BFSPrint() {
+            ArrayDeque<Node> queue = new ArrayDeque<>();
+            queue.addLast(this);
+
+            while (!queue.isEmpty()) {
+                Node node = queue.removeFirst();
+                System.out.printf("%d ", node.value);
+
+                if (node.left != null) {
+                    queue.addLast(node.left);
+                }
+                if (node.right != null) {
+                    queue.addLast(node.right);
+                }
+            }
+
+            System.out.println();
         }
     }
 }
